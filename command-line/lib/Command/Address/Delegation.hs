@@ -16,7 +16,7 @@ import Prelude hiding
     ( mod )
 
 import Cardano.Address
-    ( bech32, unsafeMkAddress )
+    ( bech32With, unsafeMkAddress )
 import Cardano.Address.Derivation
     ( Depth (..) )
 import Cardano.Address.Style.Shelley
@@ -70,14 +70,14 @@ mod liftCmd = command "delegation" $
 
 run :: Cmd -> IO ()
 run Cmd{credential} = do
-    (_, bytes) <- hGetBech32 stdin allowedPrefixes
+    (hrp, bytes) <- hGetBech32 stdin allowedPrefixes
     case Shelley.extendAddress (unsafeMkAddress bytes) credential of
         Left (ErrInvalidAddressStyle msg) ->
             fail msg
         Left (ErrInvalidAddressType  msg) ->
             fail msg
         Right addr ->
-           B8.hPutStr stdout $ T.encodeUtf8 $ bech32 addr
+            B8.hPutStr stdout $ T.encodeUtf8 $ bech32With hrp addr
   where
     allowedPrefixes =
         [ CIP5.addr
