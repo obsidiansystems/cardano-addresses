@@ -5,6 +5,8 @@
 - Bech32 prefixes for shared account addresses were fixed to match the
   latest draft of [CIP-1854][].
 
+- cardano-addresses is now built with GHC 8.10.7.
+
 [CIP-1854]: https://github.com/cardano-foundation/CIPs/blob/master/CIP-1854/CIP-1854.md
 
 ## [3.5.0] - 2021-06-28
