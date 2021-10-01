@@ -106,34 +106,12 @@ let
       })
 
       # GHCJS build configuration
-      ({ pkgs, config, ... }: let
-        # Run the script to build the C sources from cryptonite and cardano-crypto
-        # and place the result in jsbits/cardano-crypto.js
-        jsbits = pkgs.runCommand "cardano-addresses-jsbits" {} ''
-          script=$(mktemp -d)
-          cp -r ${../jsbits/emscripten}/* $script
-          ln -s ${pkgs.srcOnly {name = "cryptonite-src"; src = config.packages.cryptonite.src;}}/cbits $script/cryptonite
-          ln -s ${pkgs.srcOnly {name = "cardano-crypto-src"; src = config.packages.cardano-crypto.src;}}/cbits $script/cardano-crypto
-          patchShebangs $script/build.sh
-          (cd $script && PATH=${
-              # The extra buildPackages here is for closurecompiler.
-              # Without it we get `unknown emulation for platform: js-unknown-ghcjs` errors.
-              lib.makeBinPath (with pkgs.buildPackages.buildPackages;
-                [emscripten closurecompiler coreutils])
-            }:$PATH ./build.sh)
-          mkdir -p $out
-          cp $script/cardano-crypto.js $out
-        '';
-        addJsbits = ''
-          mkdir -p jsbits
-          cp ${jsbits}/* jsbits
-        '';
-      in lib.mkMerge [
+      (import ../jsbits/emscripten)
+      ({ pkgs, config, ... }: lib.mkMerge [
         (lib.mkIf pkgs.stdenv.hostPlatform.isGhcjs {
           packages.digest.components.library.libs = lib.mkForce [ pkgs.buildPackages.zlib ];
           packages.cardano-addresses-cli.components.library.build-tools = [ pkgs.buildPackages.buildPackages.gitMinimal ];
           packages.cardano-addresses-jsapi.components.library.build-tools = [ pkgs.buildPackages.buildPackages.gitMinimal ];
-          packages.cardano-addresses-jsbits.components.library.preConfigure = addJsbits;
           packages.cardano-addresses-cli.components.tests.unit.preCheck = ''
             export CARDANO_ADDRESSES_CLI="${config.hsPkgs.cardano-addresses-cli.components.exes.cardano-address}/bin"
           '';
