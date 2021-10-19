@@ -115,6 +115,7 @@ import Type.Reflection
 
 import qualified Basement.Compat.Base as Basement
 import qualified Basement.String as Basement
+import qualified Cardano.Mnemonic.Compat as Compat
 import qualified Crypto.Encoding.BIP39.English as Dictionary
 import qualified Crypto.Random.Entropy as Crypto
 import qualified Data.ByteArray as BA
@@ -229,7 +230,7 @@ genEntropy =
         eitherToIO =
             either (throwM . UnexpectedEntropyError) return
     in
-        (eitherToIO . mkEntropy) =<< Crypto.getEntropy (size `div` 8)
+        (eitherToIO . mkEntropy) =<< Compat.getEntropy (size `div` 8)
 
 -- | Smart-constructor for 'Mnemonic'. Requires a type application to
 -- disambiguate the mnemonic size.
