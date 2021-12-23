@@ -15,7 +15,7 @@ function h$copyToHeap(buf_d, buf_o, tgt, len) {
   var u8 = buf_d.u8;
   var hexes = "";
   for(var i=0;i<len;i++) {
-    h$cardano_crypto.HEAPU8[tgt+i] = u8[buf_o+i];
+    h$cardano_crypto["HEAPU8"][tgt+i] = u8[buf_o+i];
     hexes += h$toHex(u8[buf_o+i]);
   }
   // h$logWrapper("=> " + len + " " + hexes + " " + buf_o + " " + buf_d.len);
@@ -25,8 +25,8 @@ function h$copyFromHeap(src, buf_d, buf_o, len) {
   var u8 = buf_d.u8;
   var hexes = "";
   for(var i=0;i<len;i++) {
-    u8[buf_o+i] = h$cardano_crypto.HEAPU8[src+i];
-    hexes += h$toHex(h$cardano_crypto.HEAPU8[src+i]);
+    u8[buf_o+i] = h$cardano_crypto["HEAPU8"][src+i];
+    hexes += h$toHex(h$cardano_crypto["HEAPU8"][src+i]);
   }
   // h$logWrapper("<= " + len + " " + hexes + " " + buf_o + " " + buf_d.len);
 }
@@ -44,9 +44,9 @@ function h$getTmpBuffer(n, minSize) {
   var sn = h$bufferSizes[n];
   if(sn < minSize) {
     if(sn > 0) {
-      h$cardano_crypto._free(h$buffers[n]);
+      h$cardano_crypto["_free"](h$buffers[n]);
     }
-    h$buffers[n] = h$cardano_crypto._malloc(2*minSize); // fixme 2* shouldn't be needed
+    h$buffers[n] = h$cardano_crypto["_malloc"](2*minSize); // fixme 2* shouldn't be needed
     h$bufferSizes[n] = minSize;
   }
   return h$buffers[n];
@@ -67,7 +67,7 @@ var h$md5_digest_size      = 16;
 function h$cryptonite_md5_init(ctx_d, ctx_o) {
   h$logWrapper("h$cryptonite_md5_init");
   var ctx_ptr = h$getTmpBuffer(0, h$md5_ctx_size);
-  h$cardano_crypto._cryptonite_md5_init(ctx_ptr);
+  h$cardano_crypto["_cryptonite_md5_init"](ctx_ptr);
   h$copyFromHeap(ctx_ptr, ctx_d, ctx_o, h$md5_ctx_size);
 }
 
@@ -75,7 +75,7 @@ function h$cryptonite_md5_update(ctx_d, ctx_o, data_d, data_o, len) {
   h$logWrapper("h$cryptonite_md5_update");
   var ctx_ptr  = h$getTmpBufferWith(0, ctx_d,  ctx_o,  h$md5_ctx_size),
       data_ptr = h$getTmpBufferWith(1, data_d, data_o, len);
-  h$cardano_crypto._cryptonite_md5_update(ctx_ptr, data_ptr, len);
+  h$cardano_crypto["_cryptonite_md5_update"](ctx_ptr, data_ptr, len);
   h$copyFromHeap(ctx_ptr, ctx_d, ctx_o, h$md5_ctx_size);
 }
 
@@ -83,7 +83,7 @@ function h$cryptonite_md5_finalize(ctx_d, ctx_o, out_d, out_o) {
   h$logWrapper("h$cryptonite_md5_finalize");
   var ctx_ptr = h$getTmpBufferWith(0, ctx_d, ctx_o, h$md5_ctx_size),
       out_ptr = h$getTmpBuffer(1, h$md5_digest_size);
-  h$cardano_crypto._cryptonite_md5_finalize(ctx_ptr, out_ptr);
+  h$cardano_crypto["_cryptonite_md5_finalize"](ctx_ptr, out_ptr);
   h$copyFromHeap(out_ptr, out_d, out_o, h$md5_digest_size);
 }
 
@@ -94,7 +94,7 @@ var h$sha256_digest_size   = 32;
 function h$cryptonite_sha256_init(ctx_d, ctx_o) {
   h$logWrapper("h$cryptonite_sha256_init");
   var ctx_ptr = h$getTmpBuffer(0, h$sha256_ctx_size);
-  h$cardano_crypto._cryptonite_sha256_init(ctx_ptr);
+  h$cardano_crypto["_cryptonite_sha256_init"](ctx_ptr);
   h$copyFromHeap(ctx_ptr, ctx_d, ctx_o, h$sha256_ctx_size);
 }
 
@@ -102,7 +102,7 @@ function h$cryptonite_sha256_update(ctx_d, ctx_o, data_d, data_o, len) {
   h$logWrapper("h$cryptonite_sha256_update");
   var ctx_ptr  = h$getTmpBufferWith(0, ctx_d,  ctx_o,  h$sha256_ctx_size),
       data_ptr = h$getTmpBufferWith(1, data_d, data_o, len);
-  h$cardano_crypto._cryptonite_sha256_update(ctx_ptr, data_ptr, len);
+  h$cardano_crypto["_cryptonite_sha256_update"](ctx_ptr, data_ptr, len);
   h$copyFromHeap(ctx_ptr, ctx_d, ctx_o, h$sha256_ctx_size);
 }
 
@@ -110,7 +110,7 @@ function h$cryptonite_sha256_finalize(ctx_d, ctx_o, out_d, out_o) {
   h$logWrapper("h$cryptonite_sha256_finalize");
   var ctx_ptr = h$getTmpBufferWith(0, ctx_d, ctx_o, h$sha256_ctx_size),
       out_ptr = h$getTmpBuffer(1, h$sha256_digest_size);
-  h$cardano_crypto._cryptonite_sha256_finalize(ctx_ptr, out_ptr);
+  h$cardano_crypto["_cryptonite_sha256_finalize"](ctx_ptr, out_ptr);
   h$copyFromHeap(out_ptr, out_d, out_o, h$sha256_digest_size);
 }
 
@@ -121,7 +121,7 @@ var h$sha512_digest_size   = 64;
 function h$cryptonite_sha512_init(ctx_d, ctx_o) {
   h$logWrapper("h$cryptonite_sha512_init");
   var ctx_ptr = h$getTmpBuffer(0, h$sha512_ctx_size);
-  h$cardano_crypto._cryptonite_sha512_init(ctx_ptr);
+  h$cardano_crypto["_cryptonite_sha512_init"](ctx_ptr);
   h$copyFromHeap(ctx_ptr, ctx_d, ctx_o, h$sha512_ctx_size);
 }
 
@@ -129,7 +129,7 @@ function h$cryptonite_sha512_update(ctx_d, ctx_o, data_d, data_o, len) {
   h$logWrapper("h$cryptonite_sha512_update");
   var ctx_ptr = h$getTmpBufferWith(0, ctx_d, ctx_o, h$sha512_ctx_size),
       data_ptr = h$getTmpBufferWith(1, data_d, data_o, len);
-  h$cardano_crypto._cryptonite_sha512_update(ctx_ptr, data_ptr, len);
+  h$cardano_crypto["_cryptonite_sha512_update"](ctx_ptr, data_ptr, len);
   h$copyFromHeap(ctx_ptr, ctx_d, ctx_o, h$sha512_ctx_size);
 }
 
@@ -137,7 +137,7 @@ function h$cryptonite_sha512_finalize(ctx_d, ctx_o, out_d, out_o) {
   h$logWrapper("h$cryptonite_sha512_finalize");
   var ctx_ptr = h$getTmpBufferWith(0, ctx_d, ctx_o, h$sha512_ctx_size),
       out_ptr = h$getTmpBuffer(1, h$sha512_digest_size);
-  h$cardano_crypto._cryptonite_sha512_finalize(ctx_ptr, out_ptr);
+  h$cardano_crypto["_cryptonite_sha512_finalize"](ctx_ptr, out_ptr);
   h$copyFromHeap(out_ptr, out_d, out_o, h$sha512_digest_size);
 }
 
